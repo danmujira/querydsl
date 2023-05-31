@@ -2,6 +2,7 @@ package prj.danmuji.querydsl.controller;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.*;
 import prj.danmuji.querydsl.model.domain.User;
 import prj.danmuji.querydsl.model.dto.UserDto;
@@ -18,8 +19,8 @@ public class UserController {
     private final UserService userService;
 
     @GetMapping("")
-    public List<User> getUserList() {
-        return userService.getUserList();
+    public Page<User> getUserListPage(String name, int page) {
+        return userService.getUserListPage(name, page);
     }
 
     @GetMapping("/{name}")
