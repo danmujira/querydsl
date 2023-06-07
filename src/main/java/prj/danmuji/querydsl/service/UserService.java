@@ -4,6 +4,7 @@ import com.querydsl.core.types.Predicate;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -11,10 +12,16 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.RequestBody;
 import prj.danmuji.querydsl.exception.NoUserException;
 import prj.danmuji.querydsl.model.domain.User;
+import prj.danmuji.querydsl.model.domain.UserDocument;
 import prj.danmuji.querydsl.model.domain.repository.UserRepository;
 import prj.danmuji.querydsl.model.domain.repository.UserRepositorySupport;
+import prj.danmuji.querydsl.model.domain.repository.UserSearchQueryRepository;
+import prj.danmuji.querydsl.model.domain.repository.UserSearchRepository;
+import prj.danmuji.querydsl.model.dto.SearchCondition;
 import prj.danmuji.querydsl.model.dto.UserDto;
 
+import javax.transaction.Transactional;
+import java.time.LocalDateTime;
 import java.util.List;
 
 import static prj.danmuji.querydsl.model.domain.QUser.user;
@@ -24,6 +31,8 @@ import static prj.danmuji.querydsl.model.domain.QUser.user;
 public class UserService {
     private final UserRepositorySupport userRepositorySupport;
     private final UserRepository userRepository;
+    private final UserSearchQueryRepository userSearchQueryRepository;
+    private final UserSearchRepository userSearchRepository;
 
     /**
      * 모든 유저 정보 조회
@@ -48,6 +57,10 @@ public class UserService {
         return userRepository.findAll(predicate, PageRequest.of(page - 1, 10, Sort.Direction.DESC, "seq"));
     }
 
+    public List<UserDocument> getUserListByEs(SearchCondition q, Pageable pageable) {
+        return userSearchQueryRepository.findByConditions(q, pageable);
+    }
+
     /**
      * 이름에 해당하는 유저 정보 조회
      * @param name
@@ -64,14 +77,22 @@ public class UserService {
      * @param userDto
      * @return
      */
+    @Transactional
     public long saveUser(UserDto userDto) {
+        // DB insert
+        LocalDateTime now = LocalDateTime.now();
         User user = User.builder()
                 .name(userDto.getName())
                 .phone(userDto.getPhone())
                 .state(userDto.getState())
                 .role(userDto.getRole())
+                .tag(userDto.getTag())
+                .createAt(now)
                 .build();
         userRepository.save(user);
+        // ElasticSearch insert
+        userSearchRepository.save(UserDocument.from(user));
+        //webClient.saveUser(user.getSeq(), userDto, now);
         return 1;
     }
 

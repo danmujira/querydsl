@@ -10,4 +10,5 @@ public class UserDto {
     private String phone;
     private UserState state = UserState.ACTIVE;
     private UserRole role = UserRole.USER;
+    private String tag;
 }

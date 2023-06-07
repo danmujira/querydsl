@@ -3,8 +3,13 @@ package prj.danmuji.querydsl.controller;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.web.bind.annotation.*;
+import prj.danmuji.querydsl.constant.UserRole;
+import prj.danmuji.querydsl.constant.UserState;
 import prj.danmuji.querydsl.model.domain.User;
+import prj.danmuji.querydsl.model.domain.UserDocument;
+import prj.danmuji.querydsl.model.dto.SearchCondition;
 import prj.danmuji.querydsl.model.dto.UserDto;
 import prj.danmuji.querydsl.service.UserService;
 
@@ -23,9 +28,9 @@ public class UserController {
         return userService.getUserListPage(name, page);
     }
 
-    @GetMapping("/{name}")
-    public User getUserOne(@PathVariable String name) {
-        return userService.getUserOne(name);
+    @GetMapping("/es")
+    public List<UserDocument> getUserList(SearchCondition q, Pageable pageable) {
+        return userService.getUserListByEs(q, pageable);
     }
 
     @PostMapping("")

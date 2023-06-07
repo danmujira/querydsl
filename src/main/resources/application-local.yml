@@ -8,3 +8,8 @@ spring:
       driverClassName: org.mariadb.jdbc.Driver
   jpa:
     show-sql: true
+
+search:
+  elastic:
+    url: http://localhost:9200
+    indexName: index04

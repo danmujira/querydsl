@@ -16,7 +16,7 @@ import java.time.LocalDateTime;
 public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long seq;
+    private Long seq;
 
     @Column(name = "name")
     private String name;
@@ -32,15 +32,19 @@ public class User {
     @Column(name = "role")
     private UserRole role;
 
-    @CreationTimestamp
+    @Column(name = "tag")
+    private String tag;
+
     @Column(name = "create_at")
-    LocalDateTime createAt;
+    private LocalDateTime createAt;
 
     @Builder
-    User(String name, String phone, UserState state, UserRole role) {
+    User(String name, String phone, UserState state, UserRole role, String tag, LocalDateTime createAt) {
         this.name = name;
         this.phone = phone;
         this.state = state;
         this.role = role;
+        this.tag = tag;
+        this.createAt = createAt;
     }
 }
