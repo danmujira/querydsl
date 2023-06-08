@@ -3,6 +3,7 @@ package prj.danmuji.querydsl.model.domain.repository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.elasticsearch.core.ElasticsearchOperations;
 import org.springframework.data.elasticsearch.core.SearchHit;
 import org.springframework.data.elasticsearch.core.SearchHits;
@@ -39,7 +40,7 @@ public class UserSearchQueryRepository {
 
     /**
      * 검색 조건 세팅
-     * @param q
+     * @param q 검색조건
      * @return
      */
     private CriteriaQuery createQuery(SearchCondition q) {
@@ -59,6 +60,7 @@ public class UserSearchQueryRepository {
         if (!ObjectUtils.isEmpty(q.getTag())) {
             query.addCriteria(Criteria.where("tag").matches(q.getTag()));
         }
+        query.addSort(Sort.by("id").descending());
         return query;
 
     }

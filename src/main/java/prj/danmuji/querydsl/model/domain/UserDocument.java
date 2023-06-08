@@ -40,6 +40,7 @@ public class UserDocument {
         return UserDocument.builder()
                 .id(user.getSeq())
                 .name(user.getName())
+                .phone(user.getPhone())
                 .state(user.getState())
                 .role(user.getRole())
                 .tag(user.getTag())

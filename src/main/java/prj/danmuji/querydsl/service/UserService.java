@@ -77,7 +77,7 @@ public class UserService {
      * @param userDto
      * @return
      */
-    @Transactional
+    @Transactional(rollbackOn = Exception.class)
     public long saveUser(UserDto userDto) {
         // DB insert
         LocalDateTime now = LocalDateTime.now();
@@ -102,8 +102,13 @@ public class UserService {
      * @param phone
      * @return
      */
-    public long updateUserPhone(@RequestBody long id, String phone) {
+    @Transactional(rollbackOn = Exception.class)
+    public int updateUserPhone(@RequestBody long id, String phone) {
         // QuerydslRepositorySupport 사용
-        return userRepositorySupport.updateUserPhone(id, phone);
+        userRepositorySupport.updateUserPhone(id, phone);
+        // Elasticsearch 수정
+        User user = userRepository.findById(id).orElseThrow(() -> new NoUserException(HttpStatus.BAD_REQUEST, "No user exist"));
+        userSearchRepository.save(UserDocument.from(user));
+        return 1;
     }
 }

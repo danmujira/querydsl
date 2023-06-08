@@ -11,6 +11,10 @@ public class ElasticsearchConfig extends AbstractElasticsearchConfig {
 
     private final ElasticsearchProp elasticsearchProp;
 
+    /**
+     * elastic 설정 prop를 이용하여 기본정보 설정
+     * @return
+     */
     @Override
     public RestHighLevelClient elasticsearchClient() {
         ClientConfiguration clientConfiguration = ClientConfiguration.builder()

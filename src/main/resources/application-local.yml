@@ -12,4 +12,3 @@ spring:
 search:
   elastic:
     url: http://localhost:9200
-    indexName: index04

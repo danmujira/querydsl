@@ -9,5 +9,4 @@ import org.springframework.context.annotation.Configuration;
 @Data
 public class ElasticsearchProp {
     String url;
-    String indexName;
 }
