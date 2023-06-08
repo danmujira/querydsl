@@ -45,6 +45,9 @@ public class UserSearchQueryRepository {
      */
     private CriteriaQuery createQuery(SearchCondition q) {
         CriteriaQuery query = new CriteriaQuery(new Criteria());
+        if (q.getSeq() > 0) {
+            query.addCriteria(Criteria.where("id").is(q.getSeq()));
+        }
         if (StringUtils.hasText(q.getName())) {
             query.addCriteria(Criteria.where("name").is(q.getName()));
         }
