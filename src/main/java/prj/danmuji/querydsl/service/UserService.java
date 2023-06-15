@@ -2,6 +2,7 @@ package prj.danmuji.querydsl.service;
 
 import com.querydsl.core.types.Predicate;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -26,6 +27,7 @@ import java.util.List;
 
 import static prj.danmuji.querydsl.model.domain.QUser.user;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class UserService {
@@ -49,12 +51,14 @@ public class UserService {
      * @param page
      * @return
      */
-    public Page<User> getUserListPage(String name, int page) {
+    public Page<User> getUserListPage(String name, int page, int size) {
         Predicate predicate = null;
         if (StringUtils.hasText(name)) {
             predicate = user.name.contains(name);
+            return userRepository.findAll(predicate, PageRequest.of(page - 1, ((size == 0)?10:size), Sort.Direction.DESC, "seq"));
+        } else {
+            return userRepository.findAll(PageRequest.of(page - 1, ((size == 0)?10:size), Sort.Direction.DESC, "seq"));
         }
-        return userRepository.findAll(predicate, PageRequest.of(page - 1, 10, Sort.Direction.DESC, "seq"));
     }
 
     public List<UserDocument> getUserListByEs(SearchCondition q, Pageable pageable) {
@@ -90,6 +94,7 @@ public class UserService {
                 .createAt(now)
                 .build();
         userRepository.save(user);
+        log.info("seq={}", user.getSeq());
         // ElasticSearch insert
         userSearchRepository.save(UserDocument.from(user));
         //webClient.saveUser(user.getSeq(), userDto, now);

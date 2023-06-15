@@ -28,8 +28,8 @@ public class UserController {
      * @return
      */
     @GetMapping("")
-    public Page<User> getUserListPage(String name, int page) {
-        return userService.getUserListPage(name, page);
+    public Page<User> getUserListPage(String name, int page, int size) {
+        return userService.getUserListPage(name, page, size);
     }
 
     /**

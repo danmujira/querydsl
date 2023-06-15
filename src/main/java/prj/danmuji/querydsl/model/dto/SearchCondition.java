@@ -10,7 +10,7 @@ import prj.danmuji.querydsl.constant.UserState;
 @Setter
 @Builder
 public class SearchCondition {
-    long seq;
+    Long seq;
     String name;
     String phone;
     UserRole role;

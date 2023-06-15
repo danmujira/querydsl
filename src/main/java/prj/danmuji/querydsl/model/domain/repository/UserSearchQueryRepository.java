@@ -33,6 +33,7 @@ public class UserSearchQueryRepository {
     public List<UserDocument> findByConditions(SearchCondition q, Pageable pageable) {
         CriteriaQuery query = createQuery(q).setPageable(pageable);
         SearchHits<UserDocument> search = elasticsearchOperations.search(query, UserDocument.class);
+        log.info("total counts = {}", search.getTotalHits());
         return search.stream()
                 .map(SearchHit::getContent)
                 .collect(Collectors.toList());
@@ -45,7 +46,9 @@ public class UserSearchQueryRepository {
      */
     private CriteriaQuery createQuery(SearchCondition q) {
         CriteriaQuery query = new CriteriaQuery(new Criteria());
-        if (q.getSeq() > 0) {
+        query.setTrackTotalHits(true); // total hits가 1만개 이상일때 표시
+        if (!ObjectUtils.isEmpty(q.getSeq()) && q.getSeq() > -1) {
+            log.info("exist seq");
             query.addCriteria(Criteria.where("id").is(q.getSeq()));
         }
         if (StringUtils.hasText(q.getName())) {
